@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import { getPosts, addPost, editPost, likePost } from './querys.js';
+import { 
+    getPosts,
+    addPost,
+    editPost,
+    likePost,
+    deletePosts,
+} from './querys.js';
 
 
 const app = express();
@@ -42,6 +48,7 @@ app.put('/posts/:id', async (req, res) => {
         if (!post) {
             return res.status(404).send("No se encontró el post con ese id");
         }
+        
         res.json(post);
     } catch (error) {
         console.error(error);
@@ -62,3 +69,15 @@ app.put('/posts/like/:id', async (req, res) => {
     }
 });
 
+app.delete('/posts/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const post = await deletePosts(id);
+       if (!post) {
+            return res.status(404).send("No se encontró el post con ese id");
+        }
+         res.send("Post eliminado con éxito");
+    } catch (error) {
+          return res.status(500).send("Error eliminando el post");
+    }
+})

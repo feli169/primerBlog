@@ -26,12 +26,11 @@ export async function  addPost (titulo, img, descripcion, likes = 0)  {
     console.log("Post agregado con exito");
 }
 
-
 export async function editPost(id, titulo, img, descripcion) {
   const query = `
     UPDATE posts 
     SET titulo = $1, img = $2, descripcion = $3 
-    WHERE id = $4`;
+    WHERE id = $4 RETURNING *`;
   const values = [titulo, img, descripcion, id];
   const { rows } = await pool.query(query, values);
   console.log("Post editado con exito");
@@ -43,4 +42,17 @@ export async function likePost(id) {
     const values = [id];
     const {rows} = await pool.query(query, values);
     return rows[0];
+}
+
+export async function deletePosts(id) {
+  const query = "DELETE FROM posts WHERE id = $1 RETURNING *";
+  const values = [id];
+  const { rows } = await pool.query(query, values);
+
+  if (rows.length === 0) {
+    return null; 
+  }
+
+  console.log("Post eliminado con éxito");
+  return rows[0];
 }
